@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Password Strength Checker</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+        height: 100vh;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        width: 350px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .input-group {
+        position: relative;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 2px solid #ddd;
+        outline: none;
+        font-size: 16px;
+        transition: 0.3s;
+    }
+
+    input:focus {
+        border-color: #667eea;
+    }
+
+    .toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .strength-bar {
+        height: 10px;
+        border-radius: 10px;
+        margin-top: 15px;
+        background: #eee;
+        overflow: hidden;
+    }
+
+    .strength {
+        height: 100%;
+        width: 0%;
+        transition: 0.3s;
+    }
+
+    .text {
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    ul {
+        margin-top: 15px;
+        list-style: none;
+    }
+
+    ul li {
+        font-size: 14px;
+        margin-bottom: 5px;
+        color: #555;
+    }
+
+    .valid {
+        color: green;
+    }
+
+    .invalid {
+        color: red;
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Password Checker</h2>
+
+    <div class="input-group">
+        <input type="password" id="password" placeholder="Enter password">
+        <span class="toggle" onclick="togglePassword()">Show</span>
+    </div>
+
+    <div class="strength-bar">
+        <div class="strength" id="strength"></div>
+    </div>
+
+    <div class="text" id="strengthText">Strength: None</div>
+
+    <ul>
+        <li id="length" class="invalid">✔ At least 8 characters</li>
+        <li id="uppercase" class="invalid">✔ Uppercase letter</li>
+        <li id="lowercase" class="invalid">✔ Lowercase letter</li>
+        <li id="number" class="invalid">✔ Number</li>
+        <li id="special" class="invalid">✔ Special character</li>
+    </ul>
+</div>
+
+<script>
+
+const password = document.getElementById("password");
+const strengthBar = document.getElementById("strength");
+const strengthText = document.getElementById("strengthText");
+
+password.addEventListener("input", () => {
+    let value = password.value;
+    let strength = 0;
+
+    const length = value.length >= 8;
+    const upper = /[A-Z]/.test(value);
+    const lower = /[a-z]/.test(value);
+    const number = /[0-9]/.test(value);
+    const special = /[^A-Za-z0-9]/.test(value);
+
+    update("length", length);
+    update("uppercase", upper);
+    update("lowercase", lower);
+    update("number", number);
+    update("special", special);
+
+    if (length) strength++;
+    if (upper) strength++;
+    if (lower) strength++;
+    if (number) strength++;
+    if (special) strength++;
+
+    if (strength <= 2) {
+        strengthBar.style.width = "30%";
+        strengthBar.style.background = "red";
+        strengthText.innerText = "Strength: Weak";
+    } else if (strength <= 4) {
+        strengthBar.style.width = "65%";
+        strengthBar.style.background = "orange";
+        strengthText.innerText = "Strength: Medium";
+    } else {
+        strengthBar.style.width = "100%";
+        strengthBar.style.background = "green";
+        strengthText.innerText = "Strength: Strong";
+    }
+
+});
+
+function update(id, condition) {
+    let element = document.getElementById(id);
+    if (condition) {
+        element.classList.remove("invalid");
+        element.classList.add("valid");
+    } else {
+        element.classList.remove("valid");
+        element.classList.add("invalid");
+    }
+}
+
+function togglePassword() {
+    const password = document.getElementById("password");
+    if (password.type === "password") {
+        password.type = "text";
+    } else {
+        password.type = "password";
+    }
+}
+
+</script>
+
+</body>
+</html>
